@@ -44,6 +44,14 @@ These questions aren't here to slow you down — they're part of what's being ev
 - A short paragraph below, written in business language (not technical), explaining what you did and why
 - A live URL (Vercel or similar) if you deployed it — not required to still get credit, but expected if you did
 
+## Run the Decision Cockpit
+
+The integrated browser cockpit is available at `index.html`. Open it directly in
+a browser, or serve the repository locally with `python3 -m http.server 8000`
+from this directory and visit `http://localhost:8000/`.
+
+The decision-engine tests can be run with `npm test` when Node.js is installed.
+
 ## Our Approach
 
 *[To be filled in by the team at the end.]*
