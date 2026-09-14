@@ -4,6 +4,7 @@ import { createLaunchRecommendation, parseSeasonalityRows, compareToRecommendati
 import { localPriceTestCsv, localSeasonalityCsv } from "./src/data/local-csv-snapshots.js";
 
 const channels = ["DTC Online", "Retail/Grocery", "Gym & Office"];
+const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const state = { selectedPrice: 2.19, channelAllocation: { "DTC Online": 60, "Retail/Grocery": 20, "Gym & Office": 20 } };
 const $ = (selector) => document.querySelector(selector);
 const euro = (value) => new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", minimumFractionDigits: 2 }).format(value);
@@ -56,7 +57,7 @@ async function load() {
     evaluate = createCockpitDecisionEngine({ priceTestCsv, surveyAggregate: germanSurveyPurchaseFrequency }).evaluate;
     const rows = parseSeasonalityRows(seasonalityCsv); const peak = Math.max(...rows.map((row) => row.seasonalityIndex)); const peakMonths = rows.filter((row) => row.seasonalityIndex === peak).map((row) => row.month).join(", ");
     $("#seasonality-summary").textContent = "Demand peaks in month " + peakMonths + " (index " + peak + " versus 100 average).";
-    $("#seasonality").innerHTML = rows.map((row) => '<div class="' + (row.seasonalityIndex === peak ? "peak" : "") + '" title="Month ' + row.month + ': ' + row.seasonalityIndex + '"><b>' + row.seasonalityIndex + '</b><i style="height:' + Math.max(32, row.seasonalityIndex * 1.1) + 'px"></i><span>Month ' + row.month + "</span></div>").join("");
+    $("#seasonality").innerHTML = rows.map((row) => '<div class="' + (row.seasonalityIndex === peak ? "peak" : "") + '" title="' + monthNames[row.month - 1] + ': ' + row.seasonalityIndex + '"><b>' + row.seasonalityIndex + '</b><i style="height:' + Math.max(32, row.seasonalityIndex * 1.1) + 'px"></i><span>' + monthNames[row.month - 1] + "</span></div>").join("");
     recommendation = createLaunchRecommendation({ evaluateDecision: evaluate, seasonalityRows: rows });
     $("#recommended-price").textContent = "Recommended price: €" + recommendation.recommendedPrice.toFixed(2);
     $("#recommended-mix").textContent = Object.entries(recommendation.recommendedChannelMix).map(([channel, value]) => channel.replace(" Online", "").replace("/Grocery", "").replace(" & Office", "") + " " + value + "%").join(" / ");
