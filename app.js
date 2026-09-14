@@ -4,7 +4,7 @@ import { createLaunchRecommendation, parseSeasonalityRows, compareToRecommendati
 import { localPriceTestCsv, localSeasonalityCsv } from "./src/data/local-csv-snapshots.js";
 
 const channels = ["DTC Online", "Retail/Grocery", "Gym & Office"];
-const state = { selectedPrice: 2.19, channelAllocation: { "DTC Online": 40, "Retail/Grocery": 35, "Gym & Office": 25 } };
+const state = { selectedPrice: 2.19, channelAllocation: { "DTC Online": 60, "Retail/Grocery": 20, "Gym & Office": 20 } };
 const $ = (selector) => document.querySelector(selector);
 const euro = (value) => new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", minimumFractionDigits: 2 }).format(value);
 let evaluate, recommendation;
@@ -56,19 +56,23 @@ async function load() {
     evaluate = createCockpitDecisionEngine({ priceTestCsv, surveyAggregate: germanSurveyPurchaseFrequency }).evaluate;
     const rows = parseSeasonalityRows(seasonalityCsv); const peak = Math.max(...rows.map((row) => row.seasonalityIndex)); const peakMonths = rows.filter((row) => row.seasonalityIndex === peak).map((row) => row.month).join(", ");
     $("#seasonality-summary").textContent = "Demand peaks in month " + peakMonths + " (index " + peak + " versus 100 average).";
-    $("#seasonality").innerHTML = rows.map((row) => '<div class="' + (row.seasonalityIndex === peak ? "peak" : "") + '" title="Month ' + row.month + ': ' + row.seasonalityIndex + '"><i style="height:' + row.seasonalityIndex / 1.5 + 'px"></i><span>' + row.month + "</span></div>").join("");
+    $("#seasonality").innerHTML = rows.map((row) => '<div class="' + (row.seasonalityIndex === peak ? "peak" : "") + '" title="Month ' + row.month + ': ' + row.seasonalityIndex + '"><b>' + row.seasonalityIndex + '</b><i style="height:' + Math.max(32, row.seasonalityIndex * 1.1) + 'px"></i><span>Month ' + row.month + "</span></div>").join("");
     recommendation = createLaunchRecommendation({ evaluateDecision: evaluate, seasonalityRows: rows });
     $("#recommended-price").textContent = "Recommended price: €" + recommendation.recommendedPrice.toFixed(2);
     $("#recommended-mix").textContent = Object.entries(recommendation.recommendedChannelMix).map(([channel, value]) => channel.replace(" Online", "").replace("/Grocery", "").replace(" & Office", "") + " " + value + "%").join(" / ");
     $("#recommended-timing").textContent = "Launch April–May to build awareness before the July demand peak.";
     $("#decision-line").textContent = "Choose the balanced route: protect acceptance while improving contribution and payback.";
-    $("#recommendation-metrics").innerHTML = '<div><span>Acceptance</span><strong>' + recommendation.keyMetrics.estimatedAcceptancePct.toFixed(1) + '%</strong></div><div><span>Contribution / unit</span><strong>' + euro(recommendation.keyMetrics.contributionMarginPerUnitEur) + '</strong></div><div><span>CAC payback</span><strong>' + (recommendation.keyMetrics.approximateCacPaybackMonths == null ? "N/A" : recommendation.keyMetrics.approximateCacPaybackMonths.toFixed(1) + " mo") + '</strong></div>';
+    $("#recommendation-metrics").innerHTML = '<div><span>Acceptance · Exhibit 11</span><strong>' + recommendation.keyMetrics.estimatedAcceptancePct.toFixed(1) + '%</strong></div><div><span>Contribution / unit · Exhibit 11</span><strong>' + euro(recommendation.keyMetrics.contributionMarginPerUnitEur) + '</strong></div><div><span>CAC payback · Exhibits 4 + 7</span><strong>' + (recommendation.keyMetrics.approximateCacPaybackMonths == null ? "N/A" : recommendation.keyMetrics.approximateCacPaybackMonths.toFixed(1) + " mo") + '</strong></div>';
     const recommendedContribution = recommendation.keyMetrics.contributionMarginPerUnitEur;
     const payback = recommendation.keyMetrics.approximateCacPaybackMonths;
-    $("#calculation-note").textContent = "Mix math: 60% DTC × €1.16 + 20% Retail × €0.63 + 20% Gym × €1.13 = " + euro(recommendedContribution) + " contribution per unit. Payback: €44 CAC ÷ (" + euro(recommendedContribution) + " × 6.144 survey-reported monthly purchases) = " + payback.toFixed(1) + " months. Acceptance is survey response, not a sales-volume forecast.";
+    $("#calculation-note").textContent = "Weighted unit contribution: 60% DTC × €1.16 + 20% Retail × €0.63 + 20% Gym × €1.13 = " + euro(recommendedContribution) + ". Survey-based payback estimate: €44 CAC ÷ (" + euro(recommendedContribution) + " × 6.144 anonymised survey-reported monthly purchases) = " + payback.toFixed(1) + " months. Acceptance is survey response, not a sales-volume forecast.";
     const downside = 44 / (recommendedContribution * 0.8 * 6.144285714285714 * 0.8);
     const upside = 44 / (recommendedContribution * 1.2 * 6.144285714285714 * 1.2);
-    $("#scenario-note").textContent = "Directional payback range — downside " + downside.toFixed(1) + " mo · base " + payback.toFixed(1) + " mo · upside " + upside.toFixed(1) + " mo. The 3:1 LTV:CAC hurdle requires at least €132 lifetime value at €44 CAC; German LTV is not yet sales-validated.";
+    $("#scenario-note").textContent = "Survey-based payback scenarios: upside " + upside.toFixed(1) + " mo · base " + payback.toFixed(1) + " mo · downside " + downside.toFixed(1) + " mo. The 3:1 LTV:CAC hurdle requires at least €132 lifetime value at €44 CAC; German LTV is not yet sales-validated.";
+    $("#price-comparison-body").innerHTML = [1.79, 2.19, 2.59].map((price) => {
+      const output = evaluate({ selectedPrice: price, channelAllocation: recommendation.recommendedChannelMix });
+      return '<tr class="' + (price === recommendation.recommendedPrice ? "recommended" : "") + '"><th scope="row">€' + price.toFixed(2) + (price === recommendation.recommendedPrice ? " <span>Recommended</span>" : "") + '</th><td>' + output.estimatedAcceptancePct.toFixed(1) + '%</td><td>' + euro(output.contributionMarginPerUnitEur) + '</td><td>' + (output.approximateCacPaybackMonths == null ? "N/A" : output.approximateCacPaybackMonths.toFixed(1) + " mo") + '</td></tr>';
+    }).join("");
     $("#recommendation-reasons").innerHTML = recommendation.rationale.map((reason) => "<li>" + reason + "</li>").join("");
     $("#recommendation-tradeoff").textContent = recommendation.tradeoff;
     render();
