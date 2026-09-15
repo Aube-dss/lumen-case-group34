@@ -3,6 +3,26 @@ import { germanSurveyPurchaseFrequency } from "./src/data/prepared-german-survey
 import { createLaunchRecommendation, parseSeasonalityRows, compareToRecommendation } from "./src/engine/recommendation-engine.js";
 import { localPriceTestCsv, localSeasonalityCsv } from "./src/data/local-csv-snapshots.js";
 
+const polish = document.createElement("style");
+polish.textContent = `
+  body { background: linear-gradient(135deg, #fffdf8 0%, #f4f7f1 54%, #edf3ed 100%); }
+  main { position: relative; }
+  main::before { content: ""; position: absolute; inset: 0 0 auto; height: 190px; background: radial-gradient(circle at 87% 12%, rgba(212,154,54,.16), transparent 30%), radial-gradient(circle at 15% 5%, rgba(27,91,66,.08), transparent 28%); pointer-events: none; z-index: -1; }
+  .explore { background: rgba(255,255,255,.58); padding: 22px 24px 28px; border: 1px solid #e1e9e1; border-radius: 12px; box-shadow: 0 10px 28px rgba(23,63,48,.05); }
+  .explore legend { color: #173f30; }
+  .price { box-shadow: 0 3px 0 #e9efe9; transition: transform .18s ease, box-shadow .18s ease; }
+  .price.selected { box-shadow: 0 4px 0 #0f3f2c; }
+  .price:hover { transform: translateY(-2px); box-shadow: 0 7px 14px rgba(23,63,48,.12); }
+  .kpis { box-shadow: 0 8px 22px rgba(23,63,48,.06); }
+  .kpis article { transition: transform .2s ease, box-shadow .2s ease; }
+  .kpis article:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(23,63,48,.1); position: relative; z-index: 1; }
+  .timing { background: rgba(255,255,255,.45); padding-left: 20px; padding-right: 20px; border-radius: 12px; }
+  .methodology { color: #42554b; }
+  .methodology strong { color: #173f30; }
+  @media (max-width: 700px) { .explore { padding: 18px 16px 22px; } }
+`;
+document.head.appendChild(polish);
+
 const channels = ["DTC Online", "Retail/Grocery", "Gym & Office"];
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const presets = {
