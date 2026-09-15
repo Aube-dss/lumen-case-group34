@@ -1,52 +1,27 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LUMEN Germany Launch Cockpit</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <main class="shell">
-    <header>
-      <p class="eyebrow">LUMEN / GERMANY MARKET ENTRY</p>
-      <h1>Launch decision cockpit</h1>
-      <p class="intro">Explore the trade-off between adoption, contribution and payback. All outputs are scenarios—not German sales forecasts.</p>
-    </header>
-    <section class="grid">
-      <form class="panel controls">
-        <h2>Scenario inputs</h2>
-        <label>Launch price
-          <select id="price"><option value="1.79">€1.79</option><option value="2.19" selected>€2.19</option><option value="2.59">€2.59</option></select>
-        </label>
-        <label>Distribution channel
-          <select id="channel"><option>DTC Online</option><option>Retail/Grocery</option><option>Gym & Office</option></select>
-        </label>
-        <label>Customers <output id="customersOut">1,000</output>
-          <input id="customers" type="range" min="100" max="10000" step="100" value="1000">
-        </label>
-        <label>Repeat purchases <output id="repeatOut">2.0</output>
-          <input id="repeat" type="range" min="1" max="5" step=".1" value="2">
-        </label>
-        <label>CAC (€) <output id="cacOut">44</output>
-          <input id="cac" type="range" min="10" max="100" step="1" value="44">
-        </label>
-      </form>
-      <section class="panel results">
-        <div class="recommendation"><span>BASE CASE</span><strong>€2.19 · DTC Online / Gym & Office</strong><small>Balanced adoption and unit economics</small></div>
-        <div class="metrics">
-          <article><span>Acceptance estimate</span><strong id="acceptance">51.7%</strong></article>
-          <article><span>Contribution / unit</span><strong id="unit">€1.16</strong></article>
-          <article><span>Total contribution</span><strong id="total">€2,320</strong></article>
-          <article><span>Acquisition spend</span><strong id="spend">€44,000</strong></article>
-          <article><span>Contribution / CAC spend</span><strong id="ratio">0.53×</strong></article>
-          <article><span>Contribution margin</span><strong id="margin">65.1%</strong></article>
-        </div>
-        <p class="note" id="note">At this price and channel, the scenario produces €2,320 contribution before acquisition spend.</p>
+  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LUMEN Germany Launch Decision Cockpit</title><link rel="stylesheet" href="./styles.css"><style>body{background:#fff;color:#11231b}.control-grid{display:grid;grid-template-columns:1fr 1.45fr;gap:34px}.explore legend span{font-size:.75rem;color:#496054;margin-left:7px}.outcomes-label{margin:28px 0 8px}.launch-focus{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.launch-focus .eyebrow{grid-column:1/-1}.launch-focus div{display:grid;gap:5px}.launch-focus strong{text-transform:uppercase;font-size:.8rem;letter-spacing:.07em;color:#355c49}.launch-focus span{font-weight:650}.scenario-grid,.recommendation-metrics,.price-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}.scenario-grid{grid-template-columns:1fr 1fr}.scenario-grid>div,.recommendation-metrics div{background:rgba(255,255,255,.12);padding:13px}.scenario-grid span,.recommendation-metrics span{display:block;color:#d1e4d7;text-transform:uppercase;letter-spacing:.08em;font-size:.7rem;font-weight:700}.scenario-grid strong,.recommendation-metrics strong{display:block;font-size:1.3rem;margin:5px 0}.scenario-grid p{margin:2px 0;font-size:.9rem}.recommendation #recommended-price{font-size:2.4rem;color:#fff}.recommendation #recommended-mix{color:#fff;font-weight:800}.recommendation .decision-line{font-size:1.08rem;font-weight:700;color:#fff}.recommendation .risk{border-left:3px solid #e0b45a;padding-left:12px}.price-summary div{border-top:2px solid #bed1c4;padding:12px 0}.price-summary .balanced{border-color:#1b5b42}.bars{min-height:180px}.bars i{min-height:28px!important}.bars .peak i{box-shadow:0 0 0 3px #fff,0 0 0 5px #d49a36}@media(max-width:700px){.control-grid,.launch-focus,.scenario-grid,.recommendation-metrics,.price-summary{grid-template-columns:1fr}}</style></head>
+  <body>
+    <main>
+      <header class="hero"><p class="eyebrow">LUMEN</p><h1>Germany Launch Cockpit</h1><p>Decision support for LUMEN's German market entry.</p><h2>How should LUMEN enter Germany?</h2></header>
+      <p id="error" role="alert" hidden></p>
+      <section class="panel explore" aria-labelledby="decision-title">
+        <p class="eyebrow">Inputs → live outcomes</p><h2 id="decision-title">Your scenario</h2>
+        <div class="control-grid"><fieldset><legend>Price</legend><div id="price-controls"></div></fieldset><fieldset><legend>Channel mix <span>Always 100%</span></legend><div id="mix-controls"></div></fieldset></div>
       </section>
-    </section>
-    <footer>Data basis: LUMEN price-test results and channel economics. German demand, city and timing assumptions require pilot validation.</footer>
-  </main>
-  <script src="app.js"></script>
-</body>
+      <p class="eyebrow outcomes-label">Outcomes</p><section class="kpis" aria-label="Decision outputs">
+        <article><p>Customer acceptance</p><strong id="acceptance">—</strong><small>Expected response to this price · Exhibit 11</small></article>
+        <article><p>Contribution / unit</p><strong id="contribution">—</strong><small>After channel costs · Exhibits 9 and 11</small></article>
+        <article><p>CAC payback</p><strong id="payback">—</strong><small>Survey-based estimate · CAC Exhibit 7</small></article>
+      </section>
+      <section class="panel meaning"><p class="eyebrow">Trade-off</p><p id="tradeoff">Loading decision model…</p><p id="retail-note" class="muted"></p></section>
+      <section class="panel recommendation"><p class="eyebrow">Management decision</p><h2>What should LUMEN do?</h2><p class="decision-line" id="decision-line">—</p><p class="recommendation-answer"><strong id="recommended-price">—</strong></p><p class="recommendation-mix" id="recommended-mix">—</p><p id="recommended-timing">—</p><div class="recommendation-metrics" id="recommendation-metrics"></div><div class="calculation-note" id="calculation-note"></div><div class="scenario-note" id="scenario-note"></div><p class="risk"><strong>Key risk:</strong> LUMEN accepts lower initial retail availability in exchange for stronger margins and faster CAC recovery.</p><div class="comparison"><strong>Your selection vs. recommended</strong><div id="comparison"></div></div><h3>Why this route</h3><ul id="recommendation-reasons"></ul><p id="recommendation-tradeoff"></p></section>
+      <section class="panel"><p class="eyebrow">Price trade-off</p><div class="price-summary"><div><strong>€1.79</strong><br><span>Higher tested acceptance · weaker economics</span></div><div class="balanced"><strong>€2.19</strong><br><span>Balanced route</span></div><div><strong>€2.59</strong><br><span>Stronger unit economics · materially lower acceptance</span></div></div></section>
+      <section class="panel launch-focus"><p class="eyebrow">Launch focus</p><div><strong>Who</strong><span>Urban wellness professionals and fitness/gym-goers seeking low-sugar, natural-caffeine energy for focused work, training, and the afternoon reset. Message: premium functional performance without the sugar crash.</span></div><div><strong>Where · Exhibit 12</strong><span>Berlin + Munich</span><div class="germany-map" role="img" aria-label="Schematic map of Germany highlighting Berlin and Munich"><svg viewBox="0 0 280 190" aria-hidden="true"><path d="M70 18 125 10 177 30 218 24 247 63 230 99 245 140 207 170 151 160 115 178 73 151 42 112 49 69Z"></path><line x1="194" y1="66" x2="218" y2="63"></line><circle class="berlin" cx="194" cy="66" r="6"></circle><circle class="munich" cx="151" cy="151" r="6"></circle><text x="224" y="67">Berlin</text><text x="111" y="174">Munich</text></svg></div><small>Pilot launch in Berlin and Munich; expand after validating demand and CAC payback.</small></div><div><strong>Positioning</strong><span>Premium functional performance</span><div class="positioning-map" role="img" aria-label="Directional positioning map showing LUMEN near premium functional performance"><svg viewBox="0 0 360 250" aria-hidden="true"><line x1="42" y1="210" x2="335" y2="210"></line><line x1="42" y1="210" x2="42" y2="25"></line><text x="43" y="232">Mass-market</text><text x="270" y="232">Premium</text><text x="48" y="27">Premium functional performance</text><text x="48" y="204">Everyday energy</text><circle cx="93" cy="172" r="5"></circle><text x="99" y="169">PulsUp</text><circle cx="150" cy="143" r="5"></circle><text x="156" y="140">Mate Libre</text><circle cx="199" cy="122" r="5"></circle><text x="205" y="119">VoltFit</text><circle cx="246" cy="86" r="5"></circle><text x="252" y="83">Root &amp; Rise</text><circle class="lumen-point" cx="294" cy="48" r="7"></circle><text class="lumen-label" x="304" y="51">LUMEN</text></svg></div><small>Directional map based on competitor positioning and price evidence, not measured consumer perception data.</small></div></section>
+      <section class="panel timing"><p class="eyebrow">Seasonality · Exhibit 12</p><h2>Launch April–May to build awareness before July demand peak</h2><p id="seasonality-summary">Loading seasonal demand data…</p><div id="seasonality" class="bars" aria-label="Monthly demand seasonality"></div></section>
+      <aside class="methodology"><strong>Evidence & assumptions</strong><p>German estimate based on German survey, price tests, competitor evidence, and home-market benchmarks; not German sales history.</p><p>Customer acceptance — Exhibit 11. Contribution per unit — Exhibits 9 and 11. CAC — Exhibit 7. Purchase frequency — Exhibits 4 and 7. Seasonality — Exhibit 12. These German estimates are directional, not sales-validated. NL/DK/SE sales are context only.</p><p>Privacy: customer names and email addresses were not used in the dashboard and are not exposed in its outputs.</p></aside>
+      <section class="panel price-comparison"><p class="eyebrow">Price trade-off · Exhibit 11</p><div class="price-table-wrap"><table><caption>All prices evaluated at the recommended 60% DTC / 20% Retail / 20% Gym mix</caption><thead><tr><th scope="col">Price</th><th scope="col">Acceptance</th><th scope="col">Contribution / unit</th><th scope="col">Payback</th></tr></thead><tbody id="price-comparison-body"></tbody></table></div></section>
+      <p class="channel-assumption"><strong>Channel-mix assumption:</strong> percentages represent unit sales. Contribution is a weighted average assuming channel economics stay constant.</p><p class="interpretation"><strong>Interpretation:</strong> €2.19 is recommended because it retains acceptance above 50% while improving contribution and payback versus €1.79. €2.59 improves payback by only about 1.6 months versus €2.19 but reduces acceptance by 25 percentage points.</p><p class="payback-assumption"><strong>Payback assumption:</strong> Payback estimates are directional and based on survey-reported purchase frequency; they are not yet validated by German sales.</p><style>.muted{color:#dceee2}.price-comparison{margin-top:8px}.channel-assumption{color:#42554b;font-size:.92rem;margin:0 0 12px}.interpretation,.payback-assumption{color:#42554b;font-size:.92rem;margin:10px 0}.price-table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;background:#fff;font-size:.92rem}caption{text-align:left;color:#42554b;font-size:.88rem;margin-bottom:12px}th,td{padding:12px 10px;border-bottom:1px solid #dce3dd;text-align:left}thead th{color:#42554b;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}tbody th{font-weight:750}.recommended{background:#edf5ef}.recommended th{color:#1b5b42}.recommended span{display:inline-block;color:#8c5d14;font-size:.7rem;text-transform:uppercase;margin-left:5px}.bars{height:190px}.bars div{grid-template-rows:18px auto 18px;color:#42554b}.bars b{font-size:.7rem;color:#42554b}.bars .peak b{font-weight:800;color:#8c5d14}.recommendation{box-shadow:0 12px 30px rgba(23,63,48,.16)}.calculation-note{display:grid;gap:12px;color:#e0eee4}.calculation-note div{display:grid;gap:3px}.calculation-note strong{color:#fff}.calculation-note span{display:block}.calculation-note p{margin:0;color:#d5e8da}.scenario-note{color:#e0eee4;line-height:1.6}.scenario-note strong{color:#fff}.germany-map,.positioning-map{margin-top:8px}.germany-map svg,.positioning-map svg{width:100%;height:auto;max-width:360px;display:block}.germany-map path{fill:#dceee2;stroke:#47725d;stroke-width:2}.germany-map line{stroke:#d49a36;stroke-width:2}.germany-map circle{stroke:#fff;stroke-width:2}.germany-map .berlin{fill:#d49a36}.germany-map .munich{fill:#1b5b42}.germany-map text,.positioning-map text{font:600 11px Inter,ui-sans-serif,system-ui,sans-serif;fill:#29483a}.positioning-map line{stroke:#789584;stroke-width:1.5}.positioning-map circle{fill:#8db7a0}.positioning-map .lumen-point{fill:#d49a36;stroke:#fff;stroke-width:2}.positioning-map .lumen-label{font-weight:800;fill:#8c5d14}@media(max-width:700px){.germany-map svg,.positioning-map svg{max-width:100%}}</style>
+    </main><script type="module" src="./app.js"></script>
+  </body>
 </html>
