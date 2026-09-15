@@ -19,9 +19,25 @@ polish.textContent = `
   .timing { background: rgba(255,255,255,.45); padding-left: 20px; padding-right: 20px; border-radius: 12px; }
   .methodology { color: #42554b; }
   .methodology strong { color: #173f30; }
+  .hero { position: relative; padding: 18px 0 30px; }
+  .hero::after { content: ""; position: absolute; right: 5%; top: 18px; width: 150px; height: 150px; border: 1px solid rgba(212,154,54,.35); border-radius: 50%; box-shadow: 0 0 0 18px rgba(212,154,54,.06), 0 0 0 38px rgba(27,91,66,.04); pointer-events: none; }
+  .hero h1 { position: relative; z-index: 1; font-size: clamp(2.5rem, 7vw, 5rem); max-width: 760px; }
+  .hero h2 { color: #8c5d14; font-size: .84rem; letter-spacing: .1em; text-transform: uppercase; }
+  .hero-note { position: relative; z-index: 1; }
+  .signal-rail { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 0 0 38px; background: #cbdacf; border: 1px solid #cbdacf; box-shadow: 0 12px 26px rgba(23,63,48,.08); }
+  .signal-rail div { min-height: 104px; padding: 17px 18px; background: #173f30; color: #f5faf6; display: grid; align-content: space-between; gap: 5px; }
+  .signal-rail div:nth-child(2) { background: #d49a36; color: #173f30; }
+  .signal-rail div:nth-child(3) { background: #eaf2eb; color: #173f30; }
+  .signal-rail div:nth-child(4) { background: #fffdf8; color: #173f30; }
+  .signal-rail span { font-size: .64rem; font-weight: 800; letter-spacing: .12em; opacity: .78; }
+  .signal-rail strong { font-size: 1.45rem; letter-spacing: -.03em; }
+  .signal-rail small { font-size: .75rem; opacity: .78; }
+  .signal-rail b { font-weight: 850; }
   @media (max-width: 700px) { .explore { padding: 18px 16px 22px; } }
+  @media (max-width: 700px) { .hero::after { right: -30px; top: 12px; transform: scale(.7); } .signal-rail { grid-template-columns: 1fr 1fr; margin-bottom: 26px; } .signal-rail div { min-height: 92px; padding: 13px; } .signal-rail strong { font-size: 1.15rem; } }
 `;
 document.head.appendChild(polish);
+document.querySelector(".hero-mark span:last-child").textContent = "Decision studio · Germany 2026";
 
 const channels = ["DTC Online", "Retail/Grocery", "Gym & Office"];
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -67,6 +83,7 @@ function render() {
     const result = evaluate(state);
     $("#error").hidden = true;
     $("#acceptance").textContent = result.estimatedAcceptancePct.toFixed(1) + "%";
+    $("#rail-price").textContent = "€" + state.selectedPrice.toFixed(2);
     $("#contribution").textContent = euro(result.contributionMarginPerUnitEur);
     $("#payback").textContent = result.approximateCacPaybackMonths == null ? "Not available" : result.approximateCacPaybackMonths.toFixed(1) + " months";
     $("#tradeoff").textContent = result.tradeoff.headline;
