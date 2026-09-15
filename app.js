@@ -5,6 +5,11 @@ import { localPriceTestCsv, localSeasonalityCsv } from "./src/data/local-csv-sna
 
 const channels = ["DTC Online", "Retail/Grocery", "Gym & Office"];
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const presets = {
+  recommendation: { label: "Recommended route", price: 2.19, mix: { "DTC Online": 60, "Retail/Grocery": 20, "Gym & Office": 20 } },
+  reach: { label: "Reach-led", price: 1.79, mix: { "DTC Online": 40, "Retail/Grocery": 35, "Gym & Office": 25 } },
+  premium: { label: "Premium economics", price: 2.59, mix: { "DTC Online": 60, "Retail/Grocery": 20, "Gym & Office": 20 } }
+};
 const state = { selectedPrice: 2.19, channelAllocation: { "DTC Online": 60, "Retail/Grocery": 20, "Gym & Office": 20 } };
 const $ = (selector) => document.querySelector(selector);
 const euro = (value) => new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", minimumFractionDigits: 2 }).format(value);
@@ -16,6 +21,17 @@ function renderControls() {
   $("#mix-controls").innerHTML = channels.map((channel) => '<label>' + channel + '<input type="range" min="0" max="100" value="' + state.channelAllocation[channel] + '" data-channel="' + channel + '"><output>' + state.channelAllocation[channel] + '%</output></label>').join("");
   document.querySelectorAll("[data-price]").forEach((button) => button.addEventListener("click", () => { state.selectedPrice = Number(button.dataset.price); render(); }));
   document.querySelectorAll("[data-channel]").forEach((input) => input.addEventListener("input", () => rebalance(input.dataset.channel, Number(input.value))));
+  document.querySelectorAll("[data-preset]").forEach((button) => button.addEventListener("click", () => {
+    const preset = presets[button.dataset.preset];
+    state.selectedPrice = preset.price;
+    state.channelAllocation = { ...preset.mix };
+    render();
+  }));
+  document.querySelectorAll("[data-preset]").forEach((button) => {
+    const preset = presets[button.dataset.preset];
+    const selected = state.selectedPrice === preset.price && channels.every((channel) => state.channelAllocation[channel] === preset.mix[channel]);
+    button.classList.toggle("active", selected);
+  });
 }
 function rebalance(changed, next) {
   const other = channels.filter((channel) => channel !== changed);
@@ -38,6 +54,8 @@ function render() {
     const shortMix = (mix) => Object.entries(mix).map(([channel, value]) => channel.replace(" Online", "").replace("/Grocery", "").replace(" & Office", "") + " " + value + "%").join("<br>");
     const same = state.selectedPrice === recommendation.recommendedPrice && Object.keys(state.channelAllocation).every((channel) => state.channelAllocation[channel] === recommendation.recommendedChannelMix[channel]);
     $("#comparison").innerHTML = '<div class="scenario-grid"><div><span>Your selection</span><strong>€' + state.selectedPrice.toFixed(2) + '</strong><p>' + shortMix(state.channelAllocation) + '</p></div><div><span>Recommended</span><strong>€' + recommendation.recommendedPrice.toFixed(2) + '</strong><p>' + shortMix(recommendation.recommendedChannelMix) + '</p></div></div><p class="muted">' + (same ? "You’re on the recommended route." : compareToRecommendation(result, recommendation)) + '</p>';
+    $("#scenario-label").textContent = same ? "Recommended route active" : "Exploring an alternative route";
+    $("#scenario-insight").textContent = same ? "This opening scenario balances 51.7% tested acceptance with €1.05 contribution per unit." : compareToRecommendation(result, recommendation);
   } catch (error) { $("#error").textContent = error.message; $("#error").hidden = false; }
 }
 async function load() {
