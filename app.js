@@ -19,6 +19,10 @@ polish.textContent = `
   .timing { background: rgba(255,255,255,.45); padding-left: 20px; padding-right: 20px; border-radius: 12px; }
   .methodology { color: #42554b; }
   .methodology strong { color: #173f30; }
+  .preset:first-of-type:not(.active) { background: #fffdf8; color: #29483a; border-color: #b5c5ba; }
+  .bars { min-width: 0; width: 100%; }
+  .bars div { min-width: 0; }
+  .bars span { max-width: 100%; overflow-wrap: anywhere; }
   .hero { position: relative; padding: 18px 0 30px; }
   .hero::after { content: ""; position: absolute; right: 5%; top: 18px; width: 150px; height: 150px; border: 1px solid rgba(212,154,54,.35); border-radius: 50%; box-shadow: 0 0 0 18px rgba(212,154,54,.06), 0 0 0 38px rgba(27,91,66,.04); pointer-events: none; }
   .hero h1 { position: relative; z-index: 1; font-size: clamp(2.5rem, 7vw, 5rem); max-width: 760px; }
@@ -53,7 +57,7 @@ const euroLeading = (value) => "€" + Number(value).toFixed(2);
 let evaluate, recommendation;
 
 function renderControls() {
-  $("#price-controls").innerHTML = [1.79, 2.19, 2.59].map((price) => '<button class="price ' + (state.selectedPrice === price ? "selected" : "") + '" data-price="' + price + '">€' + price.toFixed(2) + "</button>").join("");
+  $("#price-controls").innerHTML = [1.79, 2.19, 2.59].map((price) => '<button class="price ' + (state.selectedPrice === price ? "selected" : "") + '" aria-pressed="' + (state.selectedPrice === price) + '" data-price="' + price + '">€' + price.toFixed(2) + "</button>").join("");
   $("#mix-controls").innerHTML = channels.map((channel) => '<label>' + channel + '<input type="range" min="0" max="100" value="' + state.channelAllocation[channel] + '" data-channel="' + channel + '"><output>' + state.channelAllocation[channel] + '%</output></label>').join("");
   document.querySelectorAll("[data-price]").forEach((button) => button.addEventListener("click", () => { state.selectedPrice = Number(button.dataset.price); render(); }));
   document.querySelectorAll("[data-channel]").forEach((input) => input.addEventListener("input", () => rebalance(input.dataset.channel, Number(input.value))));
@@ -67,6 +71,7 @@ function renderControls() {
     const preset = presets[button.dataset.preset];
     const selected = state.selectedPrice === preset.price && channels.every((channel) => state.channelAllocation[channel] === preset.mix[channel]);
     button.classList.toggle("active", selected);
+    button.setAttribute("aria-pressed", selected);
   });
 }
 function rebalance(changed, next) {
