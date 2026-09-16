@@ -42,7 +42,7 @@ export function createLaunchRecommendation({ evaluateDecision, seasonalityRows }
     recommendedTiming: "Launch ahead of peak demand in month " + peakMonths.join(" and ") + " (seasonality index " + peak + ").",
     keyMetrics: winner.output,
     rationale: ["Keeps tested acceptance above 50% while avoiding the steep acceptance drop at €2.59.", "Delivers stronger contribution and payback than the €1.79 reach-led option.", "Retains 20% Retail/Grocery for availability while weighting economics toward DTC and Gym & Office."],
-    tradeoff: "Prioritises a balanced launch: stronger unit economics than the low-price option, while giving up the premium price's maximum unit contribution and the low-price option's broadest acceptance.",
+    tradeoff: "LUMEN is choosing faster payback and stronger margins over maximum reach and broad retail availability. The 60% DTC / 20% Retail / 20% Gym mix keeps a retail presence while prioritizing higher-contribution channels.",
     alternatives: { reachLed: { price: bestAcceptance.price, mix: bestAcceptance.channelAllocation }, economicsLed: { price: bestEconomics.price, mix: bestEconomics.channelAllocation } },
     confidence: "Moderate: German price tests and survey evidence are direct; channel reach and home-market benchmarks are contextual rather than German sales history.",
     methodology: "Tests 12 practical multi-channel mixes in 10-point increments. Equal 40% weight is given to tested acceptance and contribution; payback receives 20% because it depends on a survey aggregate. Retail is retained at 20–40% as an explicit launch-availability guardrail, not as a claim that its reach is precisely measured."
